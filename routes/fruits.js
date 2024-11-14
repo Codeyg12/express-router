@@ -1,4 +1,5 @@
 const express = require("express");
+const { check, validationResult } = require("express-validator");
 const { Fruit } = require("../models");
 const router = express.Router();
 
@@ -11,10 +12,16 @@ router.get("/:id", async (req, res) => {
   res.send(fruit);
 });
 
-router.post("/", async (req, res) => {
-  await Fruit.create(req.body);
-  const fruits = await Fruit.findAll();
-  res.send(fruits);
+router.post("/", [check("color").notEmpty().trim()], async (req, res) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    res.json({ error: errors.array() });
+  } else {
+    await Fruit.create(req.body);
+    const fruits = await Fruit.findAll();
+    res.send(fruits);
+  }
 });
 
 router.put("/:id", async (req, res) => {
