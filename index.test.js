@@ -29,7 +29,7 @@ describe("Method testing", () => {
     });
 
     test("PUT will update a user", async () => {
-      await request(app).put("/users/1").send({ age: 31 });
+      await request(app).put("/users/1").send({ name: "Codey", age: 31 });
       const user = await User.findByPk(1);
       expect(user.age).toBe(31);
     });
@@ -62,7 +62,9 @@ describe("Method testing", () => {
     });
 
     test("PUT will update a fruit", async () => {
-      await request(app).put("/fruits/1").send({ color: "Green" });
+      await request(app)
+        .put("/fruits/1")
+        .send({ name: "Melon", color: "Green" });
       const fruit = await Fruit.findByPk(1);
       expect(fruit.color).toEqual("Green");
     });

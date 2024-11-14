@@ -13,23 +13,42 @@ router.get("/:id", async (req, res) => {
   res.json(user);
 });
 
-router.post("/", [check("name").notEmpty().trim()], async (req, res) => {
-  const errors = validationResult(req);
+router.post(
+  "/",
+  [
+    check("name").notEmpty().trim().isLength({ min: 5, max: 15 }),
+    check("age").notEmpty().trim(),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
 
-  if (!errors.isEmpty()) {
-    res.json({ error: errors.array() });
-  } else {
-    await User.create(req.body);
-    const users = await User.findAll();
-    res.send(users);
+    if (!errors.isEmpty()) {
+      res.json({ error: errors.array() });
+    } else {
+      await User.create(req.body);
+      const users = await User.findAll();
+      res.send(users);
+    }
   }
-});
+);
 
-router.put("/:id", async (req, res) => {
-  const user = await User.findByPk(req.params.id);
-  await user.update(req.body);
-  res.json(user);
-});
+router.put(
+  "/:id",
+  [
+    check("name").notEmpty().trim().isLength({ min: 5, max: 15 }),
+    check("age").notEmpty().trim(),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.json({ error: errors.array() });
+    } else {
+      const user = await User.findByPk(req.params.id);
+      await user.update(req.body);
+      res.json(user);
+    }
+  }
+);
 
 router.delete("/:id", async (req, res) => {
   const user = await User.findByPk(req.params.id);
